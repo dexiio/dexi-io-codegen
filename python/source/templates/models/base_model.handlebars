@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+from dexi.models.base_model import BaseModel
+{{#each model.fields}}
+{{#if enum}}
+from {{module}} import {{className}};
+{{/if}}
+{{/each}}
+
+
+class {{model.className}}(BaseModel):
+    def __init__(self, args=None, **kwargs):
+        """{{model.description}}"""
+        BaseModel.__init__(self, args, **kwargs)
+        {{#each model.fields}}
+        self.{{fieldName}} = None
+        {{#if this.description}}
+        """{{this.description}}"""
+        {{/if}}
+        {{/each}}
+
+        self.param_mapping = {
+            {{#each model.fields}}
+            "{{paramName}}": "{{fieldName}}",
+            {{/each}}
+        }
+
+        if kwargs is not None:
+            for key in kwargs:
+                if key in self.param_mapping:
+                    setattr(self, self.param_mapping[key], kwargs[key])
+
+            {{#each model.fields}}
+            {{#if enum}}
+            if "{{paramName}}" in kwargs:
+                self.{{fieldName}} = {{className}}.from_string(kwargs["{{paramName}}"])
+            {{/if}}
+            {{/each}}

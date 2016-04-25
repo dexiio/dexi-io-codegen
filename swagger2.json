@@ -1,0 +1,881 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "dexi.io API access for connecting your app to your scraped data.",
+    "version": "1.0",
+    "title": "cloudscrape-api"
+  },
+  "host": "api.dexi.io",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "X-DexiIO-Access": {
+      "type": "apiKey",
+      "name": "X-DexiIO-Access",
+      "in": "header"
+    }
+  },
+  "basePath": "/",
+  "paths": {
+    "runs/{runId}": {
+      "get": {
+        "description": "Request run information",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          }
+        ],
+        "operationId": "get",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Run"
+            }
+          }
+        },
+        "security": {}
+      },
+      "delete": {
+        "description": "Delete run. This will also delete all executions of this run.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          }
+        ],
+        "operationId": "remove",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute": {
+      "post": {
+        "description": "Start new execution of run.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          }
+        ],
+        "operationId": "execute",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Execution"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute/wait": {
+      "post": {
+        "description": "Starts new execution of run and outputs the output when it's done. This will also delete the execution from dexi.io immediately after execution. Please note that you need to ensure your HTTP client does not timeout for long executions. Headers will be outputted when the output is ready.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "type": "string",
+            "defaultValue": "json",
+            "required": false,
+            "description": "Specify the format you want the output to be in. Valid values are json, csv, xml and scsv."
+          },
+          {
+            "name": "deleteAfter",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": true,
+            "required": false,
+            "description": "If set to false will not delete the execution after completion. Defaults to true."
+          }
+        ],
+        "operationId": "executeSync",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute/inputs/wait": {
+      "post": {
+        "description": "Starts new execution of run using the input from the body instead of the run itself and outputs the output when it's done. This will also delete the execution from dexi.io immediately after execution. Please note that you need to ensure your HTTP client does not timeout for long executions. Headers will be outputted when the output is ready.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RunInputs"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "type": "string",
+            "defaultValue": "json",
+            "required": false,
+            "description": "Specify the format you want the output to be in. Valid values are json, csv, xml and scsv."
+          },
+          {
+            "name": "deleteAfter",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": true,
+            "required": false,
+            "description": "If set to false will not delete the execution after completion. Defaults to true."
+          }
+        ],
+        "operationId": "executeWithInputSync",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute/bulk/wait": {
+      "post": {
+        "description": "Starts new execution of run using the input rows from the body instead of the run itself and outputs the output when it's done. This will also delete the execution from dexi.io immediately after execution unless the deleteAfter parameter is false. Please note that you need to ensure your HTTP client does not timeout for long executions. Headers will be outputted when the output is ready.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BulkInputs"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "type": "string",
+            "defaultValue": "json",
+            "required": false,
+            "description": "Specify the format you want the output to be in. Valid values are json, csv, xml and scsv."
+          },
+          {
+            "name": "deleteAfter",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": true,
+            "required": false,
+            "description": "If set to false will not delete the execution after completion. Defaults to true."
+          }
+        ],
+        "operationId": "executeBulkSync",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute/inputs": {
+      "post": {
+        "description": "Starts new execution of run using the input from the body instead of the run itself.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RunInputs"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          }
+        ],
+        "operationId": "executeWithInput",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Execution"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/execute/bulk": {
+      "post": {
+        "description": "Starts new execution of run using the input rows from the body instead of from the run itself.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BulkInputs"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "connect",
+            "in": "query",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "description": "When true execution will upload it's result to configured integrations for this run"
+          }
+        ],
+        "operationId": "executeBulk",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Execution"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/latest/result": {
+      "get": {
+        "description": "Get latest successful execution of run",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "type": "string",
+            "defaultValue": "json",
+            "required": false,
+            "description": "Specify the format you want the output to be in. Valid values are json, csv, xml and scsv."
+          }
+        ],
+        "operationId": "getLatestResult",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "runs/{runId}/executions": {
+      "get": {
+        "description": "Get executions of the run sorted by newest first",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "Primary ID of the run"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "type": "integer",
+            "format": "int32",
+            "defaultValue": 0,
+            "required": false,
+            "description": "Result set offset"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "format": "int32",
+            "defaultValue": 30,
+            "required": false,
+            "description": "Result set size limit"
+          }
+        ],
+        "operationId": "getExecutions",
+        "tags": [
+          "runs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ExecutionResult"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "executions/{executionId}": {
+      "get": {
+        "description": "Get execution",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          }
+        ],
+        "operationId": "get",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Execution"
+            }
+          }
+        },
+        "security": {}
+      },
+      "delete": {
+        "description": "Delete execution permanently",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          }
+        ],
+        "operationId": "remove",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": {}
+      }
+    },
+    "executions/{executionId}/result": {
+      "get": {
+        "description": "Get execution result. As a result can be very large it is advised that you use some method of streaming to parse the result and insert it into your data store of choice.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "type": "string",
+            "defaultValue": "json",
+            "required": false,
+            "description": "Specify the format you want the output to be in. Valid values are json, csv, xml and scsv"
+          }
+        ],
+        "operationId": "getResult",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        },
+        "security": {}
+      }
+    },
+    "executions/{executionId}/file/{fileId}": {
+      "get": {
+        "description": "Get execution result file contents. Response headers includes the content-type of the file.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": ""
+          }
+        ],
+        "operationId": "getResultFile",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": {}
+      }
+    },
+    "executions/{executionId}/stop": {
+      "post": {
+        "description": "Stop execution. Note that an execution does not stop immediately.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          }
+        ],
+        "operationId": "stop",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": {}
+      }
+    },
+    "executions/{executionId}/continue": {
+      "post": {
+        "description": "Continue a stopped execution. Note that the execution might not start immediately.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "executionId",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "UUID of the execution"
+          }
+        ],
+        "operationId": "continue",
+        "tags": [
+          "executions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": {}
+      }
+    }
+  },
+  "definitions": {
+    "Run": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Primary ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Run name"
+        }
+      },
+      "description": "Runs are configurations of how a robot should be executed.",
+      "exampleOutput": {
+        "json": {
+          "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+          "name": "Awesome run"
+        }
+      }
+    },
+    "RunInputs": {
+      "properties": {},
+      "additionalProperties": true,
+      "description": "A map of input values",
+      "exampleOutput": {
+        "json": {
+          "my_input_field": "My input value",
+          "my_other_input_field": 234
+        }
+      }
+    },
+    "BulkInputs": {
+      "type": "array",
+      "additionalProperties": true,
+      "items": {
+        "type": "object",
+        "properties": {},
+        "description": "The input values themselves."
+      },
+      "description": "A list of maps with input values",
+      "exampleOutput": {
+        "json": [
+          {
+            "my_input_field": "My 1st value",
+            "my_other_input_field": 1111
+          },
+          {
+            "my_input_field": "My 2nd value",
+            "my_other_input_field": 2222
+          },
+          {
+            "my_input_field": "My 3rd value",
+            "my_other_input_field": 3333
+          }
+        ]
+      }
+    },
+    "Execution": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Primary ID"
+        },
+        "state": {
+          "type": "string",
+          "description": "State of the execution. ",
+          "defaultValue": "PENDING",
+          "enum": [
+            "QUEUED",
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "STOPPED",
+            "OK"
+          ]
+        },
+        "starts": {
+          "type": "integer",
+          "format": "int64",
+          "description": "UTC unix timestamp in milliseconds of when the execution was or will be started."
+        },
+        "finished": {
+          "type": "integer",
+          "format": "int64",
+          "description": "UTC unix timestamp in milliseconds of when the execution was finished."
+        }
+      },
+      "description": "An execution represents an execution of a run. ",
+      "exampleOutput": {
+        "json": {
+          "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+          "state": "RUNNING",
+          "starts": 1424361401458,
+          "finished": null
+        }
+      }
+    },
+    "Result": {
+      "properties": {
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Header names."
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The row values themselves."
+        },
+        "totalRows": {
+          "type": "integer",
+          "description": "Total number of rows"
+        }
+      },
+      "description": "An execution result. The JSON is structured to minimize the transfer overhead.",
+      "exampleOutput": {
+        "json": {
+          "headers": [
+            "field_a",
+            "field_b",
+            "field_c"
+          ],
+          "rows": [
+            [
+              "value 1",
+              123.212,
+              true
+            ],
+            [
+              "value 2",
+              542,
+              false
+            ],
+            [
+              "value 3",
+              342,
+              false
+            ],
+            [
+              "value 4",
+              5452,
+              false
+            ],
+            [
+              "value 5",
+              32,
+              true
+            ]
+          ],
+          "totalRows": 5
+        },
+        "csv": "\"field_a\",\"field_b\",\"field_c\"\n\"value 1\",123.212,false\n\"value 2\",542,false\n\"value 3\",342,false\n\"value 4\",5452,false\n\"value 5\",32,true\n"
+      }
+    },
+    "ExecutionResult": {
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Execution"
+          },
+          "description": "The found executions"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Current offset"
+        },
+        "totalRows": {
+          "type": "integer",
+          "description": "Total number of rows"
+        }
+      },
+      "description": "A result set for executions.",
+      "exampleOutput": {
+        "json": {
+          "rows": [
+            {
+              "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+              "state": "RUNNING",
+              "starts": 1424361401458,
+              "finished": null
+            },
+            {
+              "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+              "state": "FAILED",
+              "starts": 1424361401458,
+              "finished": 1424404663548
+            },
+            {
+              "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+              "state": "RUNNING",
+              "starts": 1424361401458,
+              "finished": null
+            },
+            {
+              "_id": "c535dfdc-b84f-11e4-b6cc-001f5b3cb724",
+              "state": "OK",
+              "starts": 1424361401458,
+              "finished": 1424377113422
+            }
+          ],
+          "offset": 0,
+          "totalRows": 120
+        }
+      }
+    }
+  }
+}

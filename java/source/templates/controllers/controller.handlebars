@@ -1,0 +1,62 @@
+package com.dexi.client.controllers;
+
+import com.dexi.client.APIException;
+{{#each controller.imports}}
+import {{this}};
+{{/each}}
+import com.sun.jersey.api.client.ClientResponse;
+
+import java.util.HashMap;
+
+public class {{controller.className}} extends AbstractController {
+
+    public {{controller.className}}(String accountId, String accessToken) {
+        super(accountId, accessToken);
+    }
+
+    {{#each controller.methods}}
+    /**
+     * {{type}} request to {{path}}.
+     *
+     * {{description}}
+     *
+     * Arguments:
+    {{#each parameters}}
+     *     {{name}} ({{#if format}}{{format}}|{{/if}}{{type}}): {{description}}
+    {{/each}}
+     *
+     **/
+    public {{#if responseModel.className}}{{responseModel.className}}{{else}}void{{/if}} {{name}}({{#if hasBody}}{{bodyClassName}} body, {{/if}}{{#each parameters}}{{className}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}) throws APIException {
+        String url = "/{{path}}";
+        final HashMap<String, Object> params = new HashMap<>();
+        {{#each parameters}}
+        params.put("{{name}}", {{name}});
+        {{/each}}
+        url = apiHelper.processParameters(url, params);
+        {{#equal type 'GET'}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.get(url);
+        {{/equal}}
+        {{#equal type 'POST'}}
+        {{#if hasBody}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, body);
+        {{else}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, null);
+        {{/if}}
+        {{/equal}}
+        {{#equal type 'PUT'}}
+        {{#if hasBody}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, body);
+        {{else}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, null);
+        {{/if}}
+        {{/equal}}
+        {{#equal type 'DELETE'}}
+        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.delete(url);
+        {{/equal}}
+        {{#if responseModel.className}}
+        return response.getEntity({{responseModel.className}}.class);
+        {{/if}}
+    }
+    {{/each}}
+
+}

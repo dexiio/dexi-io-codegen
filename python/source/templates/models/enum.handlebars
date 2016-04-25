@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+
+class {{model.className}}(object):
+    """{{model.description}}"""
+
+    {{#each model.enum}}
+    {{this}} = "{{this}}"
+    {{/each}}
+
+    @classmethod
+    def to_string(cls, val):
+        for k,v in vars(cls).iteritems():
+            if v==val:
+                return k
+
+    @classmethod
+    def from_string(cls, str):
+        return getattr(cls, str.upper(), None)

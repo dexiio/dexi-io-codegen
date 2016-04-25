@@ -1,0 +1,60 @@
+# -*- coding: utf-8 -*-
+
+from dexi.configuration import Configuration
+from dexi.api_exception import APIException
+from dexi.controllers.abstract_controller import AbstractController
+{{#each controller.imports}}
+from {{module}} import {{className}}
+{{/each}}
+
+
+class {{controller.className}}(AbstractController):
+    {{#each controller.methods}}
+    def {{name}}(self{{#if hasBody}}, body{{/if}}{{#each parameters}}, {{name}}{{#unless required}}=None{{/unless}}{{/each}}):
+        """{{type}} request to {{path}}.
+
+        {{description}}
+
+        Arguments:
+        {{#each parameters}}
+            {{name}} ({{#if format}}{{format}}|{{/if}}{{type}}): {{description}}
+        {{/each}}
+        """
+        query_builder = Configuration.BASE_URI
+        query_builder += "/{{path}}"
+        query_builder = self.api_helper.process_parameters(query_builder, {
+            {{#each parameters}}
+            "{{requestParam}}": {{name}},
+            {{/each}}
+        })
+        query_url = self.api_helper.clean_url(query_builder)
+        {{#equal type 'GET'}}
+        response = self.api_helper.get(query_url)
+        {{/equal}}
+        {{#equal type 'POST'}}
+        {{#if hasBody}}
+        response = self.api_helper.post(query_url, body)
+        {{else}}
+        response = self.api_helper.post(query_url, None)
+        {{/if}}
+        {{/equal}}
+        {{#equal type 'PUT'}}
+        {{#if hasBody}}
+        response = self.api_helper.put(query_url, body)
+        {{else}}
+        response = self.api_helper.put(query_url, None)
+        {{/if}}
+        {{/equal}}
+        {{#equal type 'DELETE'}}
+        response = self.api_helper.delete(query_url)
+        {{/equal}}
+        {{#if responseModel}}
+        if isinstance(response.body, dict):
+            return {{responseModel.className}}(**response.body)
+        else:
+            return response.raw_body
+        {{else}}
+        return response.body
+        {{/if}}
+
+    {{/each}}
