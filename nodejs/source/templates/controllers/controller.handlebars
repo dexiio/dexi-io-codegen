@@ -1,0 +1,56 @@
+var DexiAbstractController = require('../DexiAbstractController');
+var DexiAPIException = require('../DexiAPIException');
+
+function {{controller.className}}(accountId, accessToken) {
+    DexiAbstractController.call(this, accountId, accessToken);
+}
+
+
+{{controller.className}}.prototype = Object.create(DexiAbstractController);
+
+
+{{#each controller.methods}}
+/**
+ * {{type}} request to {{path}}.
+ *
+ * {{description}}
+ *
+{{#each parameters}}
+ * @param {{name}} ({{#if format}}{{format}}|{{/if}}{{type}}) {{description}}{{#unless @last}}
+{{/unless}}{{/each}}{{#if responseModel.className}}
+ * @return {{responseModel.className}}{{else}}{{/if}}
+ * @throws DexiAPIException
+ *
+ **/
+{{../controller.className}}.prototype.{{name}} = function({{#if hasBody}}body, {{/if}}{{#each parameters}}{{name}}{{#unless @last}}, {{/unless}}{{/each}})  {
+    var url = '/{{path}}';
+    var params = {};
+    {{#each parameters}}
+    params['{{name}}'] = {{name}};
+    {{/each}}
+    url = this.processParameters(url, params);
+
+    {{#equal type 'GET'}}
+    {{#if responseModel.className}}return {{/if}}this.requestGet(url);
+    {{/equal}}
+    {{#equal type 'POST'}}
+    {{#if hasBody}}
+    {{#if responseModel.className}}return {{/if}}this.requestPost(url, body);
+    {{else}}
+    {{#if responseModel.className}}return {{/if}}this.requestPost(url);
+    {{/if}}
+    {{/equal}}
+    {{#equal type 'PUT'}}
+    {{#if hasBody}}
+    {{#if responseModel.className}}return {{/if}}this.requestPut(url, body);
+    {{else}}
+    {{#if responseModel.className}}return {{/if}}this.requestPut(url, null);
+    {{/if}}
+    {{/equal}}
+    {{#equal type 'DELETE'}}
+    {{#if responseModel.className}}return {{/if}}apiHelper.delete(url);
+    {{/equal}}
+};
+{{/each}}
+
+module.exports = {{controller.className}};

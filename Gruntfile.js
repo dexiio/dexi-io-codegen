@@ -16,6 +16,14 @@ module.exports = function (grunt) {
 			java: {
 				baseClass: './java/JavaGenerator',
 				destDir: './java/dist'
+			},
+			php: {
+				baseClass: './php/PHPGenerator',
+				destDir: './php/dist'
+			},
+			nodejs: {
+				baseClass: './nodejs/NodeJSGenerator',
+				destDir: './nodejs/dist'
 			}
 		},
 		test: {
@@ -26,6 +34,10 @@ module.exports = function (grunt) {
 			java: {
 				baseClass: './java/JavaGenerator',
 				destDir: './java/dist'
+			},
+			php: {
+				baseClass: './php/PHPGenerator',
+				destDir: './php/dist'
 			}
 		}
 	});
