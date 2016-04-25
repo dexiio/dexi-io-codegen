@@ -4,7 +4,7 @@ require_once 'DexiAPIException.php';
 
 class DexiAbstractController {
     public static $BASE_URI = "https://api.dexi.io";
-    public static $USER_AGENT = 'dexi.io-php/1.0';
+    public static $USER_AGENT = 'DexiIO-PHP/1.0';
     public static $REQUEST_TIMEOUT = 3600;
 
     protected $accountId;

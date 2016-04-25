@@ -78,7 +78,7 @@ public class ApiHelper {
         return webResource
                 .header("X-DexiIO-Account", accountId)
                 .header("X-DexiIO-Access", accessToken)
-                .header("user-agent", "DexiIO CodeGen Java 1.0")
+                .header("User-Agent", "DexiIO-Java/1.0")
                 .accept("application/json").type("application/json");
     }
 

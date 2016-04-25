@@ -18,7 +18,7 @@ class APIHelper:
         self.__headers = {
             "X-DexiIO-Account": account_id,
             "X-DexiIO-Access": access_token,
-            "user-agent": "DexiIO CodeGen Python 1.0",
+            "User-Agent": "DexiIO-Python/1.0",
             "Content-Type": "application/json",
             "Accept": "application/json"
         }

@@ -2,7 +2,7 @@ var DexiAPIException = require('./DexiAPIException');
 var request = require('request');
 
 DexiAbstractController.BASE_URI = "https://api.dexi.io";
-DexiAbstractController.USER_AGENT = 'dexi.io-php/1.0';
+DexiAbstractController.USER_AGENT = 'DexiIO-NodeJS/1.0';
 DexiAbstractController.REQUEST_TIMEOUT = 3600;
 
 function DexiAbstractController(accountId, accessToken) {

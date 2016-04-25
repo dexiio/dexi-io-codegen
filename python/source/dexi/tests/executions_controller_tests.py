@@ -6,8 +6,7 @@ import unittest
 import uuid
 
 from __builtin__ import enumerate
-from dexi.controllers.executions_controller import *
-from dexi.controllers.runs_controller import *
+from dexi.dexi import Dexi
 from dexi.models.state import State
 
 logging.basicConfig(level=logging.DEBUG)
@@ -24,8 +23,8 @@ default_inputs = {
 class ExecutionsControllerTest(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(ExecutionsControllerTest, self).__init__(methodName)
-        self.executions_controller = ExecutionsController(account_id, access_token)
-        self.runs_controller = RunsController(account_id, access_token)
+        self.executions_controller = Dexi(account_id, access_token).executions()
+        self.runs_controller = Dexi(account_id, access_token).runs()
         self.run_id = os.environ['DEXI_TEST_RUN_ID']
         self.execution_id = os.environ['DEXI_TEST_EXECUTION_ID']
         self.file_id = os.environ['DEXI_TEST_FILE_ID']

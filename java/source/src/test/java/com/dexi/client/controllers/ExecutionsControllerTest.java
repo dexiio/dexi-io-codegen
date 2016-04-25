@@ -4,6 +4,7 @@ import com.dexi.client.APIException;
 import com.dexi.client.models.Execution;
 import com.dexi.client.models.Result;
 import com.dexi.client.models.State;
+import com.dexi.client.Dexi;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class ExecutionsControllerTest {
     public void setUp() throws Exception {
         String accountId = System.getenv("DEXI_TEST_ACCOUNT_ID");
         String accessToken = System.getenv("DEXI_TEST_ACCESS_TOKEN");
-        executionsController = new ExecutionsController(accountId, accessToken);
+        executionsController = new Dexi(accountId, accessToken).executions();
         executionId = UUID.fromString(System.getenv("DEXI_TEST_EXECUTION_ID"));
         fileId = System.getenv("DEXI_TEST_FILE_ID");
     }

@@ -7,8 +7,7 @@ import string
 import unittest
 
 import time
-from dexi.controllers.executions_controller import ExecutionsController
-from dexi.controllers.runs_controller import *
+from dexi.dexi import Dexi
 from dexi.models.bulk_inputs import BulkInputs
 from dexi.models.run_inputs import RunInputs
 from dexi.models.state import State
@@ -24,9 +23,9 @@ access_token = os.environ['DEXI_TEST_ACCESS_TOKEN']
 class RunsControllerTest(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(RunsControllerTest, self).__init__(methodName)
-        self.runs_controller = RunsController(account_id, access_token)
+        self.runs_controller = Dexi(account_id, access_token).runs()
         self.run_id = os.environ['DEXI_TEST_RUN_ID']
-        self.executions_controller = ExecutionsController(account_id, access_token)
+        self.executions_controller = Dexi(account_id, access_token).executions()
 
     def test_run_get(self):
         run = self.runs_controller.get(self.run_id)

@@ -2,6 +2,7 @@ package com.dexi.client.controllers;
 
 import com.dexi.client.APIException;
 import com.dexi.client.models.*;
+import com.dexi.client.Dexi;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,9 +23,9 @@ public class RunsControllerTest {
     public void setUp() throws Exception {
         String accountId = System.getenv("DEXI_TEST_ACCOUNT_ID");
         String accessToken = System.getenv("DEXI_TEST_ACCESS_TOKEN");
-        runsController = new RunsController(accountId, accessToken);
+        runsController = new Dexi(accountId, accessToken).runs();
         runId = UUID.fromString(System.getenv("DEXI_TEST_RUN_ID"));
-        executionsController = new ExecutionsController(accountId, accessToken);
+        executionsController = new Dexi(accountId, accessToken).executions();
     }
 
     @Test
