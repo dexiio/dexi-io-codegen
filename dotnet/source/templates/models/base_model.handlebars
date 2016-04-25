@@ -1,0 +1,57 @@
+package com.dexi.client.models;
+
+{{#if model.fields}}
+import org.codehaus.jackson.annotate.JsonProperty;
+
+{{/if}}
+{{#each model.imports}}
+import {{this}};
+{{/each}}
+
+/**
+ * {{model.description}}
+ **/
+public class {{model.className}} extends BaseModel {
+    private static final long serialVersionUID = 1L;
+
+    {{#each model.fields}}
+    {{#if this.description}}
+    /**
+     * {{this.description}}
+     **/
+    {{/if}}
+    @JsonProperty("{{this.paramName}}")
+    private {{this.className}} {{this.fieldName}};
+    {{#unless @last}}
+
+    {{/unless}}
+    {{/each}}
+
+    {{#each model.fields}}
+    public {{this.className}} {{this.getterName}}() {
+        return {{this.fieldName}};
+    }
+
+    public void {{this.setterName}}({{this.className}} {{this.fieldName}}) {
+        this.{{this.fieldName}} = {{this.fieldName}};
+    }
+    {{#unless @last}}
+
+    {{/unless}}
+    {{/each}}
+
+    {{#if model.hasId}}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        {{model.className}} o1 = ({{model.className}}) o;
+        return !(id != null ? !id.equals(o1.id) : o1.id != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+    {{/if}}
+}

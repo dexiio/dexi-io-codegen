@@ -1,0 +1,58 @@
+namespace Dexi {
+    {{#each controller.imports}}
+        using {{this}};
+    {{/each}}
+
+
+    public class {{controller.className}} : AbstractController {
+
+        public {{controller.className}}(string accountId, string accessToken)
+            : base(accountId, accessToken) {
+
+        }
+
+        {{#each controller.methods}}
+         /// <summary>
+         /// {{type}} request to {{path}}.
+         ///
+         /// {{description}}
+         /// </summary>{{#each parameters}}
+         /// <param name="{{name}}">{{description}}</param>
+         /// <exception cref="APIException">Something wrong with your request or the server was unavailable.</exception>
+        {{/each}}
+
+        public {{#if responseModel.className}}{{responseModel.className}}{{else}}void{{/if}} {{name}}({{#if hasBody}}{{bodyClassName}} body, {{/if}}{{#each parameters}}{{className}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+            string url = "/{{path}}";
+            IDictionary<string, object> params = new Dictionary<string, object>();
+            {{#each parameters}}
+            params["{{name}}"] = {{name}};
+            {{/each}}
+            url = apiHelper.processParameters(url, params);
+            {{#equal type 'GET'}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.get(url);
+            {{/equal}}
+            {{#equal type 'POST'}}
+            {{#if hasBody}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, body);
+            {{else}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, null);
+            {{/if}}
+            {{/equal}}
+            {{#equal type 'PUT'}}
+            {{#if hasBody}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, body);
+            {{else}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, null);
+            {{/if}}
+            {{/equal}}
+            {{#equal type 'DELETE'}}
+            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.delete(url);
+            {{/equal}}
+            {{#if responseModel.className}}
+            return response.getEntity({{responseModel.className}}.class);
+            {{/if}}
+        }
+        {{/each}}
+
+    }
+}
