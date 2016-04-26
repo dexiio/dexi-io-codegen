@@ -162,7 +162,7 @@ There might be slight differences in async languages (nodejs etc.) which will re
 
 The generated controller methods should be type-safe and do json serialization / deserialization where applicable
 
-**Example of a generated controller (Pseudo-code):  - 
+**Example of a generated controller (Pseudo-code):**
 
 ```
 
