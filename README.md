@@ -41,7 +41,7 @@ DEXI_TEST_FILE_ID
 
 ## Pseudo-Code specs
 Every SDK client implementation has the following base structure:
-
+```
 * class Dexi (Main class for the API)
 ** constructor(String accountId, String apiKey)
 ** void setEndpoint(String url)
@@ -85,6 +85,7 @@ Every SDK client implementation has the following base structure:
 ** constructor(DexiAPIResponse response) //Get the mimetype from the Content-Type header and set the data
 ** byte[] getData();
 ** String getMimeType();
+```
 
 There might be slight differences in async languages (nodejs etc.) which will return promises and non-type-safe languages for serialization / deserialization.
 
@@ -92,7 +93,8 @@ The generated controller methods should be type-safe and do json serialization /
 
 **Example of a generated controller (Pseudo-code):** 
 
-`
+```
+
 public class ExecutionsController extends DexiAbstractController {
     
     private final Dexi dexiInstance;
@@ -117,7 +119,7 @@ public class ExecutionsController extends DexiAbstractController {
         return new DexiBinaryResponse(response);
     }
 }
-`
+```
 
 
 
