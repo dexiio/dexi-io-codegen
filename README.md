@@ -104,9 +104,9 @@ Every SDK client implementation has the following base structure:
 
 
 # Used for sending the actual HTTP requests
-- class DexiApiHelper
+- class DexiAPIHelper
 
-  # Create new instance of DexiApiHelper
+  # Create new instance of DexiAPIHelper
   - constructor(Dexi dexiInstance, String accountId, String accessKey); //Uses the configurations found on the Dexi class for creating the requests
   
   # Send HTTP POST request to url - with optional requestBody
@@ -126,7 +126,7 @@ Every SDK client implementation has the following base structure:
 - class DexiAbstractController
   
   #This should be initialized in the constructor:
-  - protected ApiHelper api;
+  - protected DexiAPIHelper api;
   
   # constructor for DexiAbstractController - reimplement as-is in all sub classes
   - constructor(Dexi dexiInstance, String accountId, String accessKey);
@@ -170,10 +170,10 @@ public class ExecutionsController extends DexiAbstractController {
     
     private final Dexi dexiInstance;
     
-    private final DexiApiHelper api;
+    private final DexiAPIHelper api;
     
     public ExecutionsController(Dexi dexiInstance, String accountId, String accessKey) {
-        this.api = new ApiHelper(dexiInstance, accountId, accessKey);
+        this.api = new DexiAPIHelper(dexiInstance, accountId, accessKey);
         this.dexiInstance = dexiInstance;
     }
     
