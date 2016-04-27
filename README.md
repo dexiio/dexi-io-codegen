@@ -170,14 +170,14 @@ public class ExecutionsController extends DexiAbstractController {
     
     public ExecutionDTO getExecution(String executionId) throws DexiAPIException {
         String url = this.makeUrl("executions/{executionId}", {executionId: "test"}, {format:"json"});
-        DexiAPIResponse response = this.api.sendGet(url);
+        DexiAPIResponse response = this.api.sendRequest(url, DexiAPIHelper::HTTP_GET);
         return this.deserialize(response.getResponseBody(), ExecutionDTO.class);
     }
     
     
     public DexiBinaryResponse getBinaryFile(String executionId) throws DexiAPIException {
         String url = this.makeUrl("executions/{executionId}/file", {executionId: "test"}, {format:"json"});
-        DexiAPIResponse response = this.api.sendGet(url);
+        DexiAPIResponse response = this.api.sendRequest(url, DexiAPIHelper::HTTP_GET);
         return new DexiBinaryResponse(response);
     }
 }
