@@ -110,7 +110,7 @@ Every SDK client implementation has the following base structure:
   - constructor(Dexi dexiInstance, String accountId, String accessKey); //Uses the configurations found on the Dexi class for creating the requests
   
   # Send HTTP request to url using httpMethod (can be an enum where applicable) - with optional requestBody
-  - APIResponse sendRequest(String url, String httpMethod, String requestBody = null) throws DexiAPIException;
+  - APIResponse sendRequest(String url, String httpMethod, String requestBody = null, Map<String,String> requestHeaders = {}) throws DexiAPIException;
 
 
 # Base class of all the generated controllers
