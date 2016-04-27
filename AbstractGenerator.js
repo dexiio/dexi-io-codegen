@@ -14,6 +14,26 @@ handlebars.registerHelper('equal', function (lvalue, rvalue, options) {
     }
 });
 
+handlebars.registerHelper('join', function (delimiter, arr, options) {
+    if (arguments.length < 3)
+        throw new Error("Handlebars Helper join needs 2 parameters");
+    return new handlebars.SafeString(arr.join(delimiter));
+});
+
+handlebars.registerHelper('stringList', function (arr, options) {
+
+    if (arr.length === 0) {
+        return '';
+    }
+
+    if (arr.length === 1) {
+        return new handlebars.SafeString('"' + arr[0] + '"');
+    }
+
+    var last = arr.pop();
+    return new handlebars.SafeString(arr.join('", "') + ' or "' + last + '"');
+});
+
 function AbstractGenerator(definition, destDir) {
     this.name = 'AbstractGenerator';
     this.definition = definition;
@@ -85,6 +105,7 @@ AbstractGenerator.prototype.getControllerFromName = function(name) {
 AbstractGenerator.prototype.getModelFromName = function(name) {
     var className = _.upperFirst(_.camelCase(name));
     return {
+        name: name,
         className: className,
         type: this.MODEL_TYPE_CLASS,
         import: this.getImportPathForClass('models',className)
@@ -98,6 +119,10 @@ AbstractGenerator.prototype.getImportPathForClass = function(type, className) {
 
 AbstractGenerator.prototype.toArrayModel = function(className) {
     return className + '[]';
+};
+
+AbstractGenerator.prototype.getModel = function(className) {
+    return _.find(this.models, {className: className});
 };
 
 /**

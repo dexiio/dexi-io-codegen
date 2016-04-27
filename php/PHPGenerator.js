@@ -24,7 +24,54 @@ function PHPGenerator() {
 util.inherits(PHPGenerator, AbstractGenerator);
 
 PHPGenerator.prototype.generateModels = function () {
-	log.debug('No model generation for PHP');
+	var template = this.getTemplate('model.handlebars');
+
+    var modelsDir = this.destDir + '/dexi/models';
+
+    fileUtil.mkdir(modelsDir);
+
+    this.models.forEach(function(model) {
+        if (model.type !== 'class') {
+            return;
+        }
+
+        log.debug('Generating model for', model.name);
+        var modelPath = modelsDir + '/' + model.className + '.php';
+
+        fileUtil.write(modelPath, template({
+            model: model
+        }));
+
+    }, this);
+};
+PHPGenerator.prototype.parseModelReference = function(definition) {
+    var out = AbstractGenerator.prototype.parseModelReference.apply(this, arguments);
+    if (out.type === 'class') {
+        var model = this.getModel(out.className);
+        if (model && model.additionalProperties) {
+            var objectModel = {
+                name: this.TYPE_MAP,
+                className: this.TYPE_MAP,
+                type: this.MODEL_TYPE_MAP,
+                import: null
+            };
+
+            if (model.type === this.MODEL_TYPE_LIST) {
+                objectModel.className = this.toArrayModel(objectModel.className)
+            }
+
+            return objectModel;
+        }
+
+    }
+
+    return out;
+};
+
+PHPGenerator.prototype.ensureEnumModel = function(definition) {
+    var out = this.parseModelReference(definition);
+    out.className = this.TYPE_STRING;
+    return out;
 };
 
 PHPGenerator.prototype.generateControllers = function () {

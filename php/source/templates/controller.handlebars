@@ -21,7 +21,7 @@ class {{controller.className}} extends DexiAbstractController {
      *
      * {{description}}
     {{#each parameters}}
-     * @param {{className}} ${{name}} {{#if format}}({{format}}){{/if}} {{description}}{{#unless @last}}
+     * @param {{className}} ${{name}} {{#if format}}({{format}}){{/if}} {{{description}}}{{#unless @last}}
 {{/unless}}{{/each}}{{#if responseModel.className}}
      * @return object ({{responseModel.className}}){{else}}{{/if}}
      * @throws DexiAPIException

@@ -1,0 +1,26 @@
+<?php
+
+require_once '../DexiBaseModel.php';
+
+{{#each model.imports}}
+require_once '../{{this}}.php';
+{{/each}}
+
+/**
+ * {{model.description}}
+ **/
+class {{model.className}} extends DexiBaseModel {
+
+    {{#each model.fields}}
+    {{#if this.description}}
+    /**
+     * {{this.description}}
+     * @var {{this.className}} {{#if enum}}( One of {{stringList enum}} ){{/if}}
+     **/
+    {{/if}}
+    public ${{this.fieldName}};
+    {{#unless @last}}
+
+    {{/unless}}
+    {{/each}}
+}
