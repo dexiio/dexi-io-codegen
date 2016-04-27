@@ -1,0 +1,84 @@
+<?php
+{{#each controllers}}
+require_once 'controllers/{{className}}.php';
+{{/each}}
+
+class Dexi {
+    private $accountId;
+    private $apiKey;
+    private $userAgent = 'Dexi-PHP/1.0';
+    private $requestTimeout = 3600;
+    private $endpoint = 'https://api.dexi.io';
+
+    /**
+     * Create new API client instance
+     * @param $accountId
+     * @param $apiKey
+     */
+    public function __construct($accountId, $apiKey) {
+        $this->accountId = $accountId;
+        $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAgent() {
+        return $this->userAgent;
+    }
+
+    /**
+     * @param string $userAgent
+     */
+    public function setUserAgent($userAgent) {
+        $this->userAgent = $userAgent;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRequestTimeout() {
+        return $this->requestTimeout;
+    }
+
+    /**
+     * @param int $requestTimeout
+     */
+    public function setRequestTimeout($requestTimeout) {
+        $this->requestTimeout = $requestTimeout;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndpoint() {
+        return $this->endpoint;
+    }
+
+    /**
+     * @param string $endpoint
+     */
+    public function setEndpoint($endpoint) {
+        $this->endpoint = $endpoint;
+    }
+
+    /**
+     * Calculates the MD5 checksum of (accountId + apiKey) - e.g. MD5(accountId + apiKey)
+     *
+     * @param string $accountId
+     * @param string $apiKey
+     * @return string
+     */
+    protected function calculateAccessKey($accountId, $apiKey) {
+        return md5($accountId . $apiKey);
+    }
+
+    {{#each controllers}}
+    /**
+     * @return {{className}}
+     */
+    public function {{name}}() {
+        return new {{className}}($this, $this->accountId, $this->calculateAccessKey($this->accountId, $this->apiKey));
+    }
+    {{/each}}
+}

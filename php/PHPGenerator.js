@@ -1,67 +1,63 @@
 var util = require('util');
 var log = require('../logger');
-var sys = require('sys');
-var execSync = require('child_process').execSync;
 var _ = require('LoDash');
 var handlebars = require('handlebars');
 var fileUtil = require('../FileUtil');
 var AbstractGenerator = require('../AbstractGenerator');
-var controllerGenerator = require('./PHPControllerGenerator');
 
 function PHPGenerator() {
 	AbstractGenerator.apply(this, arguments);
 	this.name = 'PHPGenerator';
+	this.sources = ['dexi','composer.json','test.sh'];
+    this.sourceDir = __dirname + '/source';
+    this.templatesDir = this.sourceDir + '/templates';
+
+	this.TYPE_UUID = 'string';
+	this.TYPE_STRING = 'string';
+	this.TYPE_BOOL = 'boolean';
+	this.TYPE_INT = 'integer';
+	this.TYPE_LONG = 'long';
+	this.TYPE_BINARY = 'DexiBinaryResponse';
+	this.TYPE_MAP = 'object';
 }
 
 util.inherits(PHPGenerator, AbstractGenerator);
 
-var SRC_DIR = __dirname + '/source';
-
-PHPGenerator.preProcess = function (destDir) {
-	log.debug('Copying files from ', SRC_DIR, 'to', destDir);
-
-	if (fileUtil.exists(destDir)) {
-		log.debug('Destination directory exists, deleting..');
-		fileUtil.rm(destDir);
-	}
-	fileUtil.mkdir(destDir);
-	_.each(['dexi', 'composer.json', 'test.sh'], function (filename) {
-		fileUtil.cp(SRC_DIR + '/' + filename, destDir + '/' + filename);
-	});
-};
-
-PHPGenerator.generateModels = function (definition, destDir) {
+PHPGenerator.prototype.generateModels = function () {
 	log.debug('No model generation for PHP');
 };
 
-PHPGenerator.generateControllers = function (definition, destDir) {
-	log.debug('Generating controllers');
-	var controllers = {};
-	_.each(definition.paths, function (pathDefinition, pathUrl) {
-		log.debug('Processing path', pathUrl);
-		var controllerName = pathUrl.split('/')[0];
-		if (!controllers[controllerName]) {
-			controllers[controllerName] = {};
-		}
-		var controller = controllers[controllerName];
-		controller[pathUrl] = pathDefinition;
-	});
-	log.debug('Paths have been split into', Object.keys(controllers).length, 'controllers');
+PHPGenerator.prototype.generateControllers = function () {
 
-	var controllersDir = destDir + '/dexi/controllers';
-	_.each(controllers, function (pathDefinition, controllerName) {
-		controllerGenerator.generateController(pathDefinition, controllerName, controllersDir);
-	});
+	var controllersDir = this.destDir + '/dexi/controllers';
+
+    fileUtil.mkdir(controllersDir);
+
+    var template = this.getTemplate('controller.handlebars');
+
+    this.controllers.forEach(function(controller) {
+        log.debug('Generating controller for', controller.name);
+        var controllerPath = controllersDir + '/' + controller.className + '.php';
+
+        fileUtil.write(controllerPath, template({
+            controller: controller
+        }));
+
+    }, this);
+
 };
 
-PHPGenerator.generate = function (definition, destDir) {
-	this.super_.generate.apply(this, arguments);
-};
+PHPGenerator.prototype.generateMain = function() {
+    var mainFile = this.destDir + '/dexi/Dexi.php';
 
-PHPGenerator.test = function (destDir) {
-	log.debug('Testing generated code for', this.name);
+    var template = this.getTemplate('main.handlebars');
 
-	execSync("sh " + destDir + "/test.sh", {stdio: [0, 1, 2]});
+    log.debug('Generating main for PHP');
+
+    fileUtil.write(mainFile, template({
+        controllers: this.controllers,
+        models: this.models
+    }));
 };
 
 module.exports = PHPGenerator;

@@ -48,13 +48,20 @@ module.exports = function (grunt) {
 
 	grunt.registerMultiTask('generate', 'Generate source code', function () {
 		var definition = ApiDefinition.load();
-		var generator = require(this.data.baseClass);
-		generator.generate(definition, this.data.destDir);
+		var GeneratorType = require(this.data.baseClass);
+
+		var generator = new GeneratorType(definition, this.data.destDir);
+
+		generator.generate();
 	});
 
 	grunt.registerMultiTask('test', 'Testing generated source code', function () {
-		var generator = require(this.data.baseClass);
-		generator.test(this.data.destDir);
+        var definition = ApiDefinition.load();
+		var GeneratorType = require(this.data.baseClass);
+
+        var generator = new GeneratorType(definition, this.data.destDir);
+
+		generator.test();
 	});
 
 };

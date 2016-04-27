@@ -602,7 +602,9 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "type": "string",
+            "format": "byte"
           }
         },
         "security": {}
@@ -776,7 +778,10 @@
         "rows": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "description": "The row values themselves."
         },

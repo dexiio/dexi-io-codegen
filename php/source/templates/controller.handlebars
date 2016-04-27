@@ -1,0 +1,63 @@
+<?php
+require_once '../DexiAbstractController.php';
+require_once '../DexiAPIException.php';
+require_once '../DexiBinaryResponse.php';
+
+class {{controller.className}} extends DexiAbstractController {
+
+    /**
+     *
+     * @param Dexi $dexi
+     * @param string $accountId the account id
+     * @param string $accessKey the calculated access key
+     */
+    public function __construct($dexi, $accountId, $accessKey) {
+        parent::__construct($dexi, $accountId, $accessKey);
+    }
+
+    {{#each controller.methods}}
+    /**
+     * {{type}} request to {{path}}.
+     *
+     * {{description}}
+    {{#each parameters}}
+     * @param {{className}} ${{name}} {{#if format}}({{format}}){{/if}} {{description}}{{#unless @last}}
+{{/unless}}{{/each}}{{#if responseModel.className}}
+     * @return object ({{responseModel.className}}){{else}}{{/if}}
+     * @throws DexiAPIException
+     *
+     **/
+    public function {{name}}({{#each parameters}}${{name}}{{#unless required}} = null{{/unless}}{{#unless @last}}, {{/unless}}{{/each}})  {
+        $pathParams = (object) array();
+        $queryParams = (object) array();{{#if hasBody}}
+        $requestBody = null;{{/if}}
+
+        {{#each parameters}}
+        {{#equal in "path"}}
+        $pathParams['{{name}}'] = ${{name}};
+        {{/equal}}
+        {{#equal in "query"}}
+        {{#unless required}}if (${{name}} !== null) { {{/unless}}
+            $queryParams['{{name}}'] = ${{name}};{{#unless required}}
+        } {{/unless}}
+        {{/equal}}
+        {{#equal in "body"}}
+        $requestBody = $this->serialize(${{name}});
+        {{/equal}}
+        {{/each}}
+
+        $url = $this->makeUrl('/{{path}}', $pathParams, $queryParams);
+
+        {{#if responseModel.className}}$response = {{/if}}$this->api->sendRequest($url, '{{type}}'{{#if hasBody}}, $requestBody{{/if}});
+
+        {{#if responseModel.className}}
+            {{#if responseModel.isBinary}}
+        return new DexiBinaryResponse($response);
+            {{else}}
+        return $this->deserialize($response->getResponseBody());
+            {{/if}}
+        {{/if}}
+    }
+    {{/each}}
+
+}
