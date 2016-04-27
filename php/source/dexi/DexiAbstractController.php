@@ -3,6 +3,10 @@
 require_once './DexiAPIException.php';
 require_once './DexiAPIHelper.php';
 
+/**
+ * The super class of all generated controllers. Provides all the tools - so that the generated classes just need to
+ * combine them in the proper way.
+ */
 class DexiAbstractController {
 
     /**

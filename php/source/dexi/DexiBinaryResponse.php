@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Wraps a HTTP response which contains binary data
+ */
 class DexiBinaryResponse {
     private $data;
     private $mimeType;

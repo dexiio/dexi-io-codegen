@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Thrown if anything happens when communicating with the API
+ */
 class DexiAPIException extends Exception {
     private $response;
     private $url;

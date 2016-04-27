@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Wrapper for all successful HTTP responses
+ */
 class DexiAPIResponse  {
     /**
      * @var integer

@@ -48,7 +48,7 @@ class {{controller.className}} extends DexiAbstractController {
 
         $url = $this->makeUrl('/{{path}}', $pathParams, $queryParams);
 
-        {{#if responseModel.className}}$response = {{/if}}$this->api->sendRequest($url, '{{type}}'{{#if hasBody}}, $requestBody{{/if}});
+        {{#if responseModel.className}}$response = {{/if}}$this->api->sendRequest($url, DexiAPIHelper::HTTP_{{type}}{{#if hasBody}}, $requestBody{{/if}});
 
         {{#if responseModel.className}}
             {{#if responseModel.isBinary}}
