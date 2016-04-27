@@ -1,0 +1,21 @@
+var DexiBaseModel = require('../DexiBaseModel');
+
+/**
+ * {{model.description}}
+ **/
+function {{model.className}}() {
+
+    {{#each model.fields}}
+    {{#if this.description}}
+    /**
+     * {{this.description}}
+     * @type {{curly this.className}} {{#if enum}}( One of {{stringList enum}} ){{/if}}
+     **/
+    {{/if}}
+    this.{{this.fieldName}} = null;
+    {{/each}}
+}
+
+{{model.className}}.prototype = Object.create(DexiBaseModel);
+
+module.exports = {{model.className}};

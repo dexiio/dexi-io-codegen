@@ -20,6 +20,11 @@ handlebars.registerHelper('join', function (delimiter, arr, options) {
     return new handlebars.SafeString(arr.join(delimiter));
 });
 
+handlebars.registerHelper('curly', function (str, options) {
+
+    return new handlebars.SafeString('{' + str + '}');
+});
+
 handlebars.registerHelper('stringList', function (arr, options) {
 
     if (arr.length === 0) {

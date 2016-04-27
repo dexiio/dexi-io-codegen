@@ -1,0 +1,69 @@
+var DexiAbstractController = require('../DexiAbstractController');
+var DexiAPIException = require('../DexiAPIException');
+var DexiAPIHelper = require('../DexiAPIHelper');
+var DexiBinaryResponse = require('../DexiBinaryResponse');
+
+/**
+ *
+ * @params dexi {Dexi}
+ * @params accountId {string} the account id
+ * @params accessKey {string} the calculated access key
+ * @constructor
+ */
+function {{controller.className}}(dexi, accountId, accessToken) {
+    DexiAbstractController.call(this, dexi, accountId, accessToken);
+}
+
+{{controller.className}}.prototype = Object.create(DexiAbstractController);
+
+{{#each controller.methods}}
+/**
+ * {{type}} request to {{path}}.
+ *
+ * {{description}}
+{{#each parameters}}
+ * @params {{name}} {{curly className}} {{#if format}}({{format}}){{/if}} {{{description}}}{{#unless @last}}
+{{/unless}}{{/each}}{{#if responseModel.className}}
+ * @returns {Promise<object>} ({{responseModel.className}}){{else}}
+ * @returns {Promise<DexiAPIResponse>}
+{{/if}}
+ * @throws {DexiAPIException}
+ *
+ **/
+{{../controller.className}}.prototype.{{name}} = function({{#each parameters}}{{name}}{{#unless @last}}, {{/unless}}{{/each}})  {
+    var pathParams = {};
+    var queryParams = {};{{#if hasBody}}
+    var requestBody = null;{{/if}}
+
+{{#each parameters}}
+    {{#equal in "path"}}
+    pathParams['{{name}}'] = {{name}};
+    {{/equal}}
+    {{#equal in "query"}}
+    {{#unless required}}if ({{name}} !== undefined) { {{/unless}}
+        queryParams['{{name}}'] = {{name}};{{#unless required}}
+    } {{/unless}}
+    {{/equal}}
+    {{#equal in "body"}}
+    requestBody = this.serialize({{name}});
+    {{/equal}}
+{{/each}}
+
+    var url = this.makeUrl('/{{path}}', pathParams, queryParams);
+
+    return this.api.sendRequest(url, DexiAPIHelper.HTTP_{{type}}{{#if hasBody}}, requestBody{{/if}}).then(function(response) {
+{{#if responseModel.className}}
+    {{#if responseModel.isBinary}}
+        return new DexiBinaryResponse(response);
+    {{else}}
+        return this.deserialize(response.getResponseBody());
+    {{/if}}
+    {{else}}
+        return response;
+{{/if}}
+    }.bind(this));
+
+};
+{{/each}}
+
+module.exports = {{controller.className}};

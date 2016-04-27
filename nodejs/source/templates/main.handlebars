@@ -1,0 +1,116 @@
+var crypto = require('crypto');
+{{#each controllers}}
+var {{className}} = require('./controllers/{{className}}');
+{{/each}}
+
+
+/**
+ * The main entry class for the dexi API client
+ *
+ * @param accountId {string}
+ * @param apiKey {string}
+ * @constructor
+ */
+function Dexi(accountId, apiKey) {
+    /**
+     *
+     * @type {string}
+     */
+    this.accountId = accountId;
+
+    /**
+     *
+     * @type {string}
+     */
+    this.apiKey = apiKey;
+
+    /**
+     *
+     * @type {string}
+     */
+    this.userAgent = 'Dexi-NodeJS/1.0';
+
+    /**
+     *
+     * @type {number}
+     */
+    this.requestTimeout = 3600;
+
+    /**
+     *
+     * @type {string}
+     */
+    this.endpoint = 'https://api.dexi.io';
+}
+
+/**
+ * Get user agent
+ * @returns {string}
+ */
+Dexi.prototype.getUserAgent = function() {
+    return this.userAgent;
+};
+
+/**
+ * Get request timeout
+ * @returns {number}
+ */
+Dexi.prototype.getRequestTimeout = function() {
+    return this.requestTimeout;
+};
+
+/**
+ * Get API endpoint
+ * @returns {string}
+ */
+Dexi.prototype.getEndpoint = function() {
+    return this.endpoint;
+};
+
+/**
+ * Set user agent
+ * @param userAgent {string}
+ */
+Dexi.prototype.setUserAgent = function(userAgent) {
+    this.userAgent = userAgent;
+};
+
+/**
+ * Set request timeout
+ *
+ * @param requestTimeout {number}
+ */
+Dexi.prototype.setRequestTimeout = function(requestTimeout) {
+    this.requestTimeout = requestTimeout;
+};
+
+/**
+ * Set API endpoint
+ *
+ * @param endpoint {string}
+ */
+Dexi.prototype.setEndpoint = function(endpoint) {
+    this.endpoint = endpoint;
+};
+
+/**
+ * Generate MD5 hash for API request
+ * @param accountId {string}
+ * @param accountId {string}
+ * @returns {string}
+ *
+ */
+Dexi.prototype.calculateAccessKey = function(accountId, apiKey) {
+    return crypto.createHash('md5').update(accountId + apiKey).digest("hex");
+};
+
+{{#each controllers}}
+/**
+ * @returns {{curly className}}
+ */
+Dexi.prototype.{{name}} = function() {
+    return new {{className}}(this, this.accountId, this.calculateAccessKey(this.accountId, this.apiKey));
+};
+{{/each}}
+
+module.exports = Dexi;
