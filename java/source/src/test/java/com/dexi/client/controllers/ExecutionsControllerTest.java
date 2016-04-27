@@ -1,10 +1,10 @@
-package com.dexi.client.controllers;
+package io.dexi.client.controllers;
 
-import com.dexi.client.APIException;
-import com.dexi.client.models.Execution;
-import com.dexi.client.models.Result;
-import com.dexi.client.models.State;
-import com.dexi.client.Dexi;
+import io.dexi.client.APIException;
+import io.dexi.client.models.Execution;
+import io.dexi.client.models.Result;
+import io.dexi.client.models.State;
+import io.dexi.client.Dexi;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -11,8 +11,6 @@ class Dexi:
         self.request_timeout = 3600
         self.endpoint = "https://api.dexi.io"
 
-
-
     def executions(self):
         return ExecutionsController(self._account_id, self._api_key)
 

@@ -1,4 +1,4 @@
-package com.dexi.client;
+package io.dexi.client;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;

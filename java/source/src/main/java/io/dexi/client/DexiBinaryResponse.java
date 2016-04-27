@@ -1,4 +1,4 @@
-package com.dexi.client;
+package io.dexi.client;
 
 public class DexiBinaryResponse  {
     private final byte[] data;

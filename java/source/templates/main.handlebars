@@ -1,6 +1,6 @@
-package com.dexi.client;
+package io.dexi.client;
 
-import com.dexi.client.controllers.*;
+import io.dexi.client.controllers.*;
 
 public class Dexi {
     private String accountId;
@@ -62,13 +62,16 @@ public class Dexi {
         return null;
     }
 
+{{#each controllers}}
     /**
-     * Interact with executions using the API
-     *
-     * @return ExecutionsController
-     */
-    public ExecutionsController executions() {
-        return new ExecutionsController(this, accountId, this.calculateAccessKey(accountId, apiKey));
+    * Interact with {{name}} using the API
+    *
+    * @return {{className}}
+    */
+    public {{className}} {{name}}() {
+        return new {{className}}(this, accountId, this.calculateAccessKey(accountId, apiKey));
     }
-    
+
+{{/each}}
+
 }

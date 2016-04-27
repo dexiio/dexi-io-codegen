@@ -1,4 +1,4 @@
-package com.dexi.client;
+package io.dexi.client;
 
 public class DexiAPIResponse  {
     private final int statusCode;

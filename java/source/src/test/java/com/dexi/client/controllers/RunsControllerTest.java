@@ -1,8 +1,8 @@
-package com.dexi.client.controllers;
+package io.dexi.client.controllers;
 
-import com.dexi.client.APIException;
-import com.dexi.client.models.*;
-import com.dexi.client.Dexi;
+import io.dexi.client.APIException;
+import io.dexi.client.models.*;
+import io.dexi.client.Dexi;
 import org.junit.Before;
 import org.junit.Test;
 

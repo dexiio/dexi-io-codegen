@@ -1,13 +1,8 @@
 var util = require('util');
 var log = require('../logger');
-var sys = require('sys');
-var execSync = require('child_process').execSync;
-var _ = require('LoDash');
 var handlebars = require('handlebars');
 var fileUtil = require('../FileUtil');
 var AbstractGenerator = require('../AbstractGenerator');
-var modelGenerator = require('./JavaModelGenerator');
-var controllerGenerator = require('./JavaControllerGenerator');
 
 function JavaGenerator() {
 	AbstractGenerator.apply(this, arguments);
@@ -16,58 +11,71 @@ function JavaGenerator() {
 
 util.inherits(JavaGenerator, AbstractGenerator);
 
-var SRC_DIR = __dirname + '/source';
-
-JavaGenerator.preProcess = function (destDir) {
-	log.debug('Copying files from ', SRC_DIR, 'to', destDir);
-
-	if (fileUtil.exists(destDir)) {
-		log.debug('Destination directory exists, deleting..');
-		fileUtil.rm(destDir);
-	}
-	fileUtil.mkdir(destDir);
-	_.each(['src', 'pom.xml', 'test.sh'], function (filename) {
-		fileUtil.cp(SRC_DIR + '/' + filename, destDir + '/' + filename);
-	});
-};
-
-JavaGenerator.generateModels = function (definition, destDir) {
+JavaGenerator.prototype.generateModels = function () {
 	log.debug('Generating models');
 
-	var modelsDir = destDir + '/src/main/java/com/dexi/client/models';
-	_.each(definition.definitions, function (definition, name) {
-		modelGenerator.generateModel(definition, name, modelsDir);
-	});
+	var modelsDir = this.destDir + '/src/main/java/io/dexi/client/models';
+
+    fileUtil.mkdir(modelsDir);
+
+	this.models.forEach(function(model) {
+        var template;
+        switch(model.type) {
+            case 'class':
+                template = this.getTemplate('models/base_model.handlebars');
+                break;
+            case 'list':
+                template = this.getTemplate('models/list_model.handlebars');
+                break;
+            case 'map':
+                template = this.getTemplate('models/map_model.handlebars');
+                break;
+            case 'enum':
+                template = this.getTemplate('models/enum.handlebars');
+                break;
+            default:
+                throw new Exception('Unknown model type: ' + model.type);
+        }
+
+        log.debug('Generating model for', model.name);
+        var modelPath = modelsDir + '/' + model.className + '.java';
+
+        fileUtil.write(modelPath, template({
+            model: model
+        }));
+
+	}, this);
 };
 
-JavaGenerator.generateControllers = function (definition, destDir) {
-	log.debug('Generating controllers');
-	var controllers = {};
-	_.each(definition.paths, function (pathDefinition, pathUrl) {
-		log.debug('Processing path', pathUrl);
-		var controllerName = pathUrl.split('/')[0];
-		if (!controllers[controllerName]) {
-			controllers[controllerName] = {};
-		}
-		var controller = controllers[controllerName];
-		controller[pathUrl] = pathDefinition;
-	});
-	log.debug('Paths have been split into', Object.keys(controllers).length, 'controllers');
+JavaGenerator.prototype.generateControllers = function () {
 
-	var controllersDir = destDir + '/src/main/java/com/dexi/client/controllers';
-	_.each(controllers, function (pathDefinition, controllerName) {
-		controllerGenerator.generateController(pathDefinition, controllerName, controllersDir);
-	});
+    var controllersDir = this.destDir + '/src/main/java/io/dexi/client/controllers';
+
+    fileUtil.mkdir(controllersDir);
+
+    var template = this.getTemplate('controller.handlebars');
+
+    this.controllers.forEach(function(controller) {
+        log.debug('Generating controller for', controller.name);
+        var controllerPath = controllersDir + '/' + controller.className + '.java';
+
+        fileUtil.write(controllerPath, template({
+            controller: controller
+        }));
+
+    }, this);
 };
 
-JavaGenerator.generate = function (definition, destDir) {
-	this.super_.generate.apply(this, arguments);
+NodeJSGenerator.prototype.generateMain = function() {
+    var mainFile = this.destDir + '/src/main/java/io/dexi/client/Dexi.java';
+
+    var template = this.getTemplate('main.handlebars');
+
+    fileUtil.write(mainFile, template({
+        controllers: this.controllers,
+        models: this.models
+    }));
 };
 
-JavaGenerator.test = function (destDir) {
-	log.debug('Testing generated code for', this.name);
-
-	execSync("sh " + destDir + "/test.sh", {stdio: [0, 1, 2]});
-};
 
 module.exports = JavaGenerator;

@@ -1,6 +1,6 @@
-package com.dexi.client.controllers;
+package io.dexi.client.controllers;
 
-import com.dexi.client.DexiAPIHelper;
+import io.dexi.client.DexiAPIHelper;
 
 public abstract class DexiAbstractController {
     protected final String accountId;
