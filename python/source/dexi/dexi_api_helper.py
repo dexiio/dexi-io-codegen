@@ -13,8 +13,9 @@ from dexi.models.base_model import BaseModel
 log = logging.getLogger(__name__)
 
 
-class APIHelper:
-    def __init__(self, account_id, access_token):
+class DexiAPIHelper:
+    def __init__(self, dexi, account_id, access_token):
+        self.__dexy = dexi
         self.__headers = {
             "X-DexiIO-Account": account_id,
             "X-DexiIO-Access": access_token,

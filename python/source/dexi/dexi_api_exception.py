@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class APIException(Exception):
+class DexiAPIException(Exception):
     def __init__(self, msg, response_code, response_body):
         Exception.__init__(self, msg)
         self.response_code = response_code

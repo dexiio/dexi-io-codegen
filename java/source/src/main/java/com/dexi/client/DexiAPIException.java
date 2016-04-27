@@ -1,10 +1,10 @@
 package com.dexi.client;
 
-public class APIException extends Exception {
+public class DexiAPIException extends Exception {
     private int status;
     private String body;
 
-    public APIException(String message, int status, String body) {
+    public DexiAPIException(String message, int status, String body) {
         super(message);
         this.status = status;
         this.body = body;
