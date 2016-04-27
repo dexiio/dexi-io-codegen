@@ -109,17 +109,8 @@ Every SDK client implementation has the following base structure:
   # Create new instance of DexiAPIHelper
   - constructor(Dexi dexiInstance, String accountId, String accessKey); //Uses the configurations found on the Dexi class for creating the requests
   
-  # Send HTTP POST request to url - with optional requestBody
-  - APIResponse sendPost(String url, String requestBody = null) throws DexiAPIException;
-  
-  # Send HTTP PUT request to url - with optional requestBody
-  - APIResponse sendPut(String url, String requestBody = null) throws DexiAPIException;
-  
-  # Send HTTP GET request to url
-  - APIResponse sendGet(String url) throws DexiAPIException;
-  
-  # Send HTTP DELETE request to url
-  - APIResponse sendDelete(String url) throws DexiAPIException;
+  # Send HTTP request to url using httpMethod (can be an enum where applicable) - with optional requestBody
+  - APIResponse sendRequest(String url, String httpMethod, String requestBody = null) throws DexiAPIException;
 
 
 # Base class of all the generated controllers
