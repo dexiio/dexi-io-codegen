@@ -1,10 +1,10 @@
 namespace Dexi {
 
-    public class APIException extends Exception {
+    public class DexiAPIException : Exception {
         private int status;
-        private String body;
+        private string body;
 
-        public APIException(String message, int status, String body) {
+        public APIException(string message, int status, string body) {
             super(message);
             this.status = status;
             this.body = body;
@@ -18,11 +18,11 @@ namespace Dexi {
             this.status = status;
         }
 
-        public String getBody() {
+        public string getBody() {
             return body;
         }
 
-        public void setBody(String body) {
+        public void setBody(string body) {
             this.body = body;
         }
     }
