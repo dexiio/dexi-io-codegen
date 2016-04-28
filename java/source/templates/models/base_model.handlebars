@@ -1,12 +1,7 @@
 package io.dexi.client.models;
 
-{{#if model.fields}}
-import org.codehaus.jackson.annotate.JsonProperty;
-
-{{/if}}
-{{#each model.imports}}
-import {{this}};
-{{/each}}
+import java.util.*;
+import io.dexi.client.controllers.*;
 
 /**
  * {{model.description}}
@@ -17,22 +12,21 @@ public class {{model.className}} extends BaseModel {
     {{#each model.fields}}
     {{#if this.description}}
     /**
-     * {{this.description}}
+     * {{{this.description}}}
      **/
     {{/if}}
-    @JsonProperty("{{this.paramName}}")
-    private {{this.className}} {{this.fieldName}};
+    private {{{this.className}}} {{this.fieldName}};
     {{#unless @last}}
 
     {{/unless}}
     {{/each}}
 
     {{#each model.fields}}
-    public {{this.className}} {{this.getterName}}() {
+    public {{{this.className}}} {{this.getterName}}() {
         return {{this.fieldName}};
     }
 
-    public void {{this.setterName}}({{this.className}} {{this.fieldName}}) {
+    public void {{this.setterName}}({{{this.className}}} {{this.fieldName}}) {
         this.{{this.fieldName}} = {{this.fieldName}};
     }
     {{#unless @last}}

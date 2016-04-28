@@ -7,18 +7,20 @@ var AbstractGenerator = require('../AbstractGenerator');
 function JavaGenerator() {
 	AbstractGenerator.apply(this, arguments);
 	this.name = 'JavaGenerator';
+    this.sourceDir = __dirname + '/source';
+    this.templatesDir = this.sourceDir + '/templates';
+    this.sources = ['src','pom.xml'];
 }
 
 util.inherits(JavaGenerator, AbstractGenerator);
 
 JavaGenerator.prototype.generateModels = function () {
-	log.debug('Generating models');
-
 	var modelsDir = this.destDir + '/src/main/java/io/dexi/client/models';
 
     fileUtil.mkdir(modelsDir);
 
 	this.models.forEach(function(model) {
+
         var template;
         switch(model.type) {
             case 'class':
@@ -66,7 +68,12 @@ JavaGenerator.prototype.generateControllers = function () {
     }, this);
 };
 
-NodeJSGenerator.prototype.generateMain = function() {
+JavaGenerator.prototype.toArrayModel = function(className) {
+    return 'List<' + className + '>';
+};
+
+
+JavaGenerator.prototype.generateMain = function() {
     var mainFile = this.destDir + '/src/main/java/io/dexi/client/Dexi.java';
 
     var template = this.getTemplate('main.handlebars');

@@ -1,17 +1,15 @@
 package io.dexi.client.controllers;
 
-import io.dexi.client.APIException;
-{{#each controller.imports}}
-import {{this}};
-{{/each}}
-import com.sun.jersey.api.client.ClientResponse;
-
+import io.dexi.client.*;
+import io.dexi.client.models.*;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class {{controller.className}} extends AbstractController {
+public class {{controller.className}} extends DexiAbstractController {
 
-    public {{controller.className}}(String accountId, String accessToken) {
-        super(accountId, accessToken);
+    public {{controller.className}}(Dexi dexi, String accountId, String accessToken) {
+        super(dexi, accountId, accessToken);
     }
 
     {{#each controller.methods}}
@@ -26,35 +24,27 @@ public class {{controller.className}} extends AbstractController {
     {{/each}}
      *
      **/
-    public {{#if responseModel.className}}{{responseModel.className}}{{else}}void{{/if}} {{name}}({{#if hasBody}}{{bodyClassName}} body, {{/if}}{{#each parameters}}{{className}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}) throws APIException {
-        String url = "/{{path}}";
-        final HashMap<String, Object> params = new HashMap<>();
-        {{#each parameters}}
-        params.put("{{name}}", {{name}});
-        {{/each}}
-        url = apiHelper.processParameters(url, params);
-        {{#equal type 'GET'}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.get(url);
-        {{/equal}}
-        {{#equal type 'POST'}}
-        {{#if hasBody}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, body);
-        {{else}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, null);
-        {{/if}}
-        {{/equal}}
-        {{#equal type 'PUT'}}
-        {{#if hasBody}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, body);
-        {{else}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, null);
-        {{/if}}
-        {{/equal}}
-        {{#equal type 'DELETE'}}
-        {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.delete(url);
-        {{/equal}}
+    public {{#if responseModel.className}}{{responseModel.className}}{{else}}void{{/if}} {{name}}({{#each parameters}}{{className}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}) throws DexiAPIException {
+        final HashMap<String, Object> pathParams = new HashMap<>();
+        final HashMap<String, Object> queryParams = new HashMap<>();
+{{#each parameters}}
+    {{#equal in "path"}}
+        pathParams.put("{{name}}", {{name}});
+    {{/equal}}
+    {{#equal in "query"}}
+        {{#unless required}}if ({{name}} != null) { {{/unless}}
+            queryParams.put("{{name}}",{{name}});{{#unless required}}
+        } {{/unless}}
+    {{/equal}}
+    {{#equal in "body"}}
+        byte[] requestBody = serialize({{name}});
+    {{/equal}}
+{{/each}}
+        String url = makeUrl("/{{path}}", pathParams, queryParams);
+        {{#if responseModel.className}}DexiAPIResponse response = {{/if}}api.sendRequest(url, DexiAPIHelper.HTTPMethod.{{type}}, {{#if hasBody}}requestBody{{else}}null{{/if}}, Collections.EMPTY_MAP);
+
         {{#if responseModel.className}}
-        return response.getEntity({{responseModel.className}}.class);
+        return deserialize(response.getResponseBody(), {{responseModel.className}}.class);
         {{/if}}
     }
     {{/each}}

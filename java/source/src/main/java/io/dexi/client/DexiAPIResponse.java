@@ -1,11 +1,13 @@
 package io.dexi.client;
 
+import java.util.Map;
+
 public class DexiAPIResponse  {
     private final int statusCode;
-    private final String responseBody;
+    private final byte[] responseBody;
     private final Map<String,String> headers;
 
-    public DexiAPIResponse(int statusCode, String responseBody, Map<String, String> headers) {
+    public DexiAPIResponse(int statusCode, byte[] responseBody, Map<String, String> headers) {
         this.statusCode = statusCode;
         this.responseBody = responseBody;
         this.headers = headers;
@@ -15,7 +17,7 @@ public class DexiAPIResponse  {
         return statusCode;
     }
 
-    public String getResponseBody() {
+    public byte[] getResponseBody() {
         return responseBody;
     }
 

@@ -223,8 +223,9 @@ AbstractGenerator.prototype.ensureEnumModel = function(definition, name) {
     var out = this.getModelFromName(name);
 
     if (!_.find(this.models, {className: out.className})) {
-        log.debug('Adding enum for', name);
+        log.debug('Adding enum for', out.className);
         var model = _.cloneDeep(out);
+        model.name = out.className;
         model.type = 'enum';
         model.enum = definition.enum;
         this.models.push(model);
@@ -275,13 +276,11 @@ AbstractGenerator.prototype.getSetterForField = function(field) {
  */
 AbstractGenerator.prototype.parseModels = function() {
     var me = this;
-    var models = [];
+    var models = this.models = [];
 
     _.each(this.definition.definitions, function (definition, name) {
         models.push(me.parseModel(name, definition));
     });
-
-    this.models = models;
 };
 
 AbstractGenerator.prototype.parseController = function(controllerName, definition) {

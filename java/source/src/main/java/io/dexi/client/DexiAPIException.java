@@ -1,5 +1,7 @@
 package io.dexi.client;
 
+import jdk.internal.jfr.events.ThrowablesEvent;
+
 public class DexiAPIException extends Exception {
     private int status;
     private String body;
@@ -8,6 +10,14 @@ public class DexiAPIException extends Exception {
         super(message);
         this.status = status;
         this.body = body;
+    }
+
+    public DexiAPIException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public DexiAPIException(String message) {
+        super(message);
     }
 
     public int getStatus() {

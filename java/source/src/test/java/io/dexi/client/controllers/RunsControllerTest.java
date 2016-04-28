@@ -1,6 +1,6 @@
 package io.dexi.client.controllers;
 
-import io.dexi.client.APIException;
+import io.dexi.client.DexiAPIException;
 import io.dexi.client.models.*;
 import io.dexi.client.Dexi;
 import org.junit.Before;
@@ -29,7 +29,7 @@ public class RunsControllerTest {
     }
 
     @Test
-    public void runsGet() throws APIException {
+    public void runsGet() throws DexiAPIException {
         Run run = runsController.get(runId);
 
         assertEquals(runId, run.getId());
@@ -37,7 +37,7 @@ public class RunsControllerTest {
     }
 
     @Test
-    public void runsExecuteWithInput() throws APIException, InterruptedException {
+    public void runsExecuteWithInput() throws DexiAPIException, InterruptedException {
         final RunInputs body = new RunInputs();
         final String email = String.format("test%s@dexi.io", new Random().nextInt());
         body.put("email", email);
@@ -52,7 +52,7 @@ public class RunsControllerTest {
         ExecutionsControllerTest.validateTestExecutionResult(email, result);
     }
 
-    private Result getAsyncResult(Execution execution) throws InterruptedException, APIException {
+    private Result getAsyncResult(Execution execution) throws InterruptedException, DexiAPIException {
         while (execution.getState() != State.OK) {
             if (execution.getState() == State.FAILED) {
                 fail("Execution failed");

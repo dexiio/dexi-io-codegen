@@ -1,6 +1,6 @@
 package io.dexi.client.controllers;
 
-import io.dexi.client.APIException;
+import io.dexi.client.DexiAPIException;
 import io.dexi.client.models.Execution;
 import io.dexi.client.models.Result;
 import io.dexi.client.models.State;
@@ -32,7 +32,7 @@ public class ExecutionsControllerTest {
     }
 
     @Test
-    public void executionsGet() throws APIException {
+    public void executionsGet() throws DexiAPIException {
         Execution execution = executionsController.get(executionId);
 
         assertNotNull(execution.getStarts());
@@ -42,7 +42,7 @@ public class ExecutionsControllerTest {
     }
 
     @Test
-    public void executionsGetResultFile() throws APIException {
+    public void executionsGetResultFile() throws DexiAPIException {
         byte[] content = executionsController.getResultFile(executionId, fileId);
 
         assertTrue(new String(content).contains("PNG"));
@@ -52,7 +52,7 @@ public class ExecutionsControllerTest {
     public void executionsGetThrowsExceptionIfNotFound() {
         try {
             executionsController.get(UUID.randomUUID());
-        } catch (APIException e) {
+        } catch (DexiAPIException e) {
             assertEquals("Not Found", e.getMessage());
             assertEquals(404, e.getStatus());
             assertEquals("{\"error\":true,\"code\":404}", e.getBody());
