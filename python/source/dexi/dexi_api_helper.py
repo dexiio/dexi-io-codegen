@@ -73,33 +73,32 @@ class DexiAPIHelper:
             value = obj.additional_properties[key]
         return value
 
-    def process_parameters(self, url, parameters):
+    def make_url(self, url, path_parameters, query_parameters):
         if url is None:
             raise ValueError("url is null")
-        if parameters is None:
+        if path_parameters is None:
             return url
-        query_parameters = {}
-        for key in parameters:
-            element = parameters[key]
+
+        for key in path_parameters:
+            element = path_parameters[key]
             if element is None:
                 replace_value = ""
             elif isinstance(element, list):
                 replace_value = "/".join(element)
             else:
                 replace_value = str(element)
-            if '{%s}' % key in url:
-                url = url.replace('{{{0}}}'.format(key), str(replace_value))
-            else:
-                query_parameters[key] = parameters[key]
-        url = self.__append_query_parameters(url, query_parameters)
+            url = url.replace('{{{0}}}'.format(key), str(replace_value))
+
+        query = self.__make_query_string(query_parameters)
+
+        if query :
+            url += query
+
         return url
 
-    def __append_query_parameters(self, url, parameters):
-        if url is None:
-            raise ValueError("url is null")
-        if parameters is None:
-            return url
-        has_params = '?' in url
+    def __make_query_string(self, parameters):
+
+        has_params = False
         for key in parameters:
             element = parameters[key]
             if element is None:
@@ -111,18 +110,10 @@ class DexiAPIHelper:
                 url = url + '{0}{1}={2}'.format(separator, key, str(parameters[key]))
             has_params = True
 
-        return url
+        if has_params:
+            return url
 
-    def clean_url(self, url):
-        regex = "^https?://[^/]+"
-        match = re.match(regex, url)
-        if match is None:
-            raise ValueError('Invalid Url format.')
-        protocol = match.group(0)
-        query_url = url[len(protocol):]
-        query_url = re.sub("//+", "/", query_url)
-        return protocol + query_url
-
+        return None
 
 class RequestWithMethod(urllib2.Request):
     def __init__(self, *args, **kwargs):
@@ -132,44 +123,3 @@ class RequestWithMethod(urllib2.Request):
     def get_method(self):
         return self._method if self._method else super(RequestWithMethod, self).get_method()
 
-
-class Response:
-    def __init__(self, code, headers, body):
-        self._code = code
-        self._headers = headers
-
-        if headers.get("Content-Encoding") == 'gzip':
-            buf = StringIO(body)
-            f = gzip.GzipFile(fileobj=buf)
-            body = f.read()
-
-        self._raw_body = body
-        self._body = self._raw_body
-
-        try:
-            self._body = json.loads(self._raw_body)
-        except ValueError:
-            # Do nothing
-            pass
-
-    @property
-    def code(self):
-        return self._code
-
-    @property
-    def body(self):
-        return self._body
-
-    @property
-    def raw_body(self):
-        return self._raw_body
-
-    @property
-    def headers(self):
-        return self._headers
-
-    def __str__(self):
-        return json.dumps({
-            'status': self.code,
-            'headers': self.headers.dict
-        })
