@@ -6,8 +6,8 @@ import json
 import urllib2
 from StringIO import StringIO
 
-from dexi.api_exception import APIException
-from dexi.configuration import Configuration
+from dexi.dexi_api_exception import DexiAPIException
+from dexi.dexi_api_response import DexiAPIResponse
 from dexi.models.base_model import BaseModel
 
 log = logging.getLogger(__name__)
@@ -24,46 +24,17 @@ class DexiAPIHelper:
             "Accept": "application/json"
         }
 
-    def get(self, url):
-        log.debug('Sending GET request to %s' % url)
-        request = RequestWithMethod(url, headers=self.__headers, method='GET')
-        try:
-            response = urllib2.urlopen(request, timeout=Configuration.CONNECTION_TIMEOUT)
-        except urllib2.HTTPError, e:
-            raise APIException(e.msg, e.code, e.read())
-        response = Response(response.code, response.headers, response.read())
-        log.debug('Got response %s' % response)
-        return response
 
-    def post(self, url, data):
-        log.debug('Sending POST request to %s' % url)
-        body = self.__to_request_body(data)
-        if body:
-            log.debug('body %s' % body)
-        request = RequestWithMethod(url, data=body, headers=self.__headers, method='POST')
-        response = urllib2.urlopen(request, timeout=Configuration.CONNECTION_TIMEOUT)
-        response = Response(response.code, response.headers, response.read())
-        log.debug('Got response %s' % response)
-        return response
+    def send_request(self, url, httpMethod, request_body, request_headers = {}):
+        body = None
 
-    def put(self, url, data):
-        log.debug('Sending PUT request to %s' % url)
-        body = self.__to_request_body(data)
-        if body:
-            log.debug('body %s' % body)
-        request = RequestWithMethod(url, data=body, headers=self.__headers, method='PUT')
-        response = urllib2.urlopen(request, timeout=Configuration.CONNECTION_TIMEOUT)
-        response = Response(response.code, response.headers, response.read())
-        log.debug('Got response %s' % response)
-        return response
+        if request_body:
+            body = self.__to_request_body(request_body)
 
-    def delete(self, url):
-        log.debug('Sending DELETE request to %s' % url)
-        request = RequestWithMethod(url, headers=self.__headers, method='DELETE')
-        response = urllib2.urlopen(request, timeout=Configuration.CONNECTION_TIMEOUT)
-        response = Response(response.code, response.headers, response.read())
-        log.debug('Got response %s' % response)
-        return response
+        request = RequestWithMethod(url, data=body, headers=self.__headers, method=httpMethod)
+        response = urllib2.urlopen(request, timeout= self.__dexy.request_timeout)
+        return DexiAPIResponse(response.code, response.read(), response.headers)
+
 
     def __to_request_body(self, obj):
         return json.dumps(self.__get_body_object(obj)) if obj is not None else None

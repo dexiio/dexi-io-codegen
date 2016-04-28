@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+
+from dexi.controllers.executions_controller import ExecutionsController
+from dexi.controllers.runs_controller import RunsController
+
+class Dexi:
+    def __init__(self, account_id, api_key):
+        self._account_id = account_id
+        self._api_key = api_key
+        self.user_agent = "Dexi-Java/1.0"
+        self.request_timeout = 3600
+        self.endpoint = "https://api.dexi.io"
+
+{{#each controllers}}
+
+    def {{name}}(self):
+        return {{className}}(self, self._account_id, self.calculate_access_key(self._account_id, self._api_key))
+
+{{/each}}

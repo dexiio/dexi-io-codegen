@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+
+from dexi.configuration import Configuration
+from dexi.api_exception import APIException
+from dexi.controllers.abstract_controller import AbstractController
+{{#each controller.imports}}
+from {{module}} import {{className}}
+{{/each}}
+
+
+class {{controller.className}}(AbstractController):
+    {{#each controller.methods}}
+    def {{name}}(self{{#each parameters}}, {{name}}{{#unless required}}=None{{/unless}}{{/each}}):
+        """{{type}} request to {{path}}.
+
+        {{description}}
+
+        Arguments:
+        {{#each parameters}}
+            {{name}} ({{#if format}}{{format}}|{{/if}}{{type}}): {{description}}
+        {{/each}}
+        """
+
+        url = self.make_url("/{{path}}",
+            {
+            {{#each parameters}}{{#equal in "path"}}
+                "{{name}}": {{name}}{{#unless @last}},{{/unless}}
+            {{/equal}}{{/each}}
+            },
+            {
+            {{#each parameters}}{{#equal in "query"}}
+                "{{name}}": {{name}}{{#unless @last}},{{/unless}}
+            {{/equal}}{{/each}}
+            }
+        )
+        {{#if hasBody}}{{#each parameters}}{{#equal in "body"}}
+        body = {{name}}
+        {{/equal}}{{/each}}{{else}}
+        body = None
+        {{/if}}
+
+        response = self.api.send_request(url, "{{type}}", body, {})
+
+        {{#if responseModel}}
+        if isinstance(response.body, dict):
+            return {{responseModel.className}}(**response.body)
+        else:
+            return response.raw_body
+        {{else}}
+        return response.body
+        {{/if}}
+
+    {{/each}}
