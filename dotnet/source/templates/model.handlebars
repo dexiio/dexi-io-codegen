@@ -1,0 +1,34 @@
+namespace dexi {
+
+    /**
+     * {{model.description}}
+     **/
+    public class {{model.className}} {
+
+        {{#each model.fields}}
+        {{#if this.description}}
+        /**
+         * {{this.description}}
+         **/
+        {{/if}}
+        private {{{this.className}}} {{this.fieldName}};
+        {{#unless @last}}
+
+        {{/unless}}
+        {{/each}}
+
+        {{#each model.fields}}
+        public {{{this.className}}} {{this.getterName}}() {
+            return {{this.fieldName}};
+        }
+
+        public void {{this.setterName}}({{{this.className}}} {{this.fieldName}}) {
+            this.{{this.fieldName}} = {{this.fieldName}};
+        }
+        {{#unless @last}}
+
+        {{/unless}}
+        {{/each}}
+    }
+
+}

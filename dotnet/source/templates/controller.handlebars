@@ -6,8 +6,8 @@ namespace Dexi {
 
     public class {{controller.className}} : AbstractController {
 
-        public {{controller.className}}(string accountId, string accessToken)
-            : base(accountId, accessToken) {
+        public {{controller.className}}(Dexi dexi, string accountId, string accessToken)
+            : base(dexi, accountId, accessToken) {
 
         }
 
@@ -27,26 +27,26 @@ namespace Dexi {
             {{#each parameters}}
             params["{{name}}"] = {{name}};
             {{/each}}
-            url = apiHelper.processParameters(url, params);
+            url = api.processParameters(url, params);
             {{#equal type 'GET'}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.get(url);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.get(url);
             {{/equal}}
             {{#equal type 'POST'}}
             {{#if hasBody}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, body);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.post(url, body);
             {{else}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.post(url, null);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.post(url, null);
             {{/if}}
             {{/equal}}
             {{#equal type 'PUT'}}
             {{#if hasBody}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, body);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.put(url, body);
             {{else}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.put(url, null);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.put(url, null);
             {{/if}}
             {{/equal}}
             {{#equal type 'DELETE'}}
-            {{#if responseModel.className}}ClientResponse response = {{/if}}apiHelper.delete(url);
+            {{#if responseModel.className}}ClientResponse response = {{/if}}api.delete(url);
             {{/equal}}
             {{#if responseModel.className}}
             return response.getEntity({{responseModel.className}}.class);

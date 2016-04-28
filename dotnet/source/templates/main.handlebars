@@ -26,12 +26,11 @@ namespace Dexi {
             return sb.Tostring();
         }
 
-        public RunsController runs() {
-            return new RunsController(this, accountId, this.CalculateAccessKey(accountId, apiKey));
+{{#each controllers}}
+        public {{className}} {{name}}() {
+            return new {{className}}(this, accountId, this.CalculateAccessKey(accountId, apiKey));
         }
-        public ExecutionsController executions() {
-            return new ExecutionsController(this, accountId, this.CalculateAccessKey(accountId, apiKey));
-        }
+{{/each}}
 
     }
 }

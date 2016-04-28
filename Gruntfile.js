@@ -24,7 +24,11 @@ module.exports = function (grunt) {
 			nodejs: {
 				baseClass: './nodejs/NodeJSGenerator',
 				destDir: './nodejs/dist'
-			}
+			},
+            dotnet: {
+                baseClass: './dotnet/DotNetGenerator',
+                destDir: './dotnet/dist'
+            }
 		},
 		test: {
 			python: {
