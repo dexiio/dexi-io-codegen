@@ -52,16 +52,24 @@ JavaGenerator.prototype.generateModels = function () {
 JavaGenerator.prototype.generateControllers = function () {
 
     var controllersDir = this.destDir + '/src/main/java/io/dexi/client/controllers';
+    var controllersTestDir = this.destDir + '/src/test/java/io/dexi/client/controllers';
 
     fileUtil.mkdir(controllersDir);
+    fileUtil.mkdir(controllersTestDir);
 
     var template = this.getTemplate('controller.handlebars');
+    var testTemplate = this.getTemplate('controller_test.handlebars');
 
     this.controllers.forEach(function(controller) {
         log.debug('Generating controller for', controller.name);
         var controllerPath = controllersDir + '/' + controller.className + '.java';
+        var controllerTestPath = controllersTestDir + '/' + controller.className + 'Test.java';
 
         fileUtil.write(controllerPath, template({
+            controller: controller
+        }));
+
+        fileUtil.write(controllerTestPath, testTemplate({
             controller: controller
         }));
 

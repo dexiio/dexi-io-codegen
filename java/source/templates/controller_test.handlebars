@@ -1,0 +1,36 @@
+package io.dexi.client.controllers;
+
+import io.dexi.client.Dexi;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import io.dexi.client.*;
+import io.dexi.client.models.*;
+import io.dexi.client.controllers.*;
+
+import static junit.framework.Assert.*;
+
+public class {{controller.className}}Test extends DexiControllerTest {
+    private {{controller.className}} controller;
+
+    @Before
+    public void setUp() throws Exception {
+        controller = dexi.{{controller.name}}();
+    }
+
+{{#each controller.methods}}
+    @Test
+    public void test_{{name}}() throws DexiAPIException {
+        {{#if responseModel.className}}{{responseModel.className}} result = {{/if}}controller.{{name}}({{#each parameters}}getTestValue("{{../../controller.name}}", "{{../name}}", "{{name}}", {{className}}.class){{#unless @last}}, {{/unless}}{{/each}});
+        {{#if responseModel.className}}
+        assertTestResult("{{../controller.name}}", "{{name}}", result);
+        {{/if}}
+    }
+
+{{/each}}
+}

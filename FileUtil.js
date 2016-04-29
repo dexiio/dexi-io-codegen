@@ -18,9 +18,16 @@ module.exports = function () {
 	};
 
 	var mkdir = function (path) {
-		if (!fs.existsSync(path)) {
-			fs.mkdirSync(path);
-		}
+        var parts = path.split(/\//g);
+        var dir = parts.shift();
+
+        parts.forEach(function(part) {
+            dir += '/' + part;
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+        });
+
 	};
 
 	var cp = function (src, dest) {
