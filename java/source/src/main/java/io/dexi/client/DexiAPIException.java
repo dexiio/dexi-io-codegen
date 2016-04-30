@@ -7,7 +7,7 @@ public class DexiAPIException extends Exception {
     private String body;
 
     public DexiAPIException(String message, int status, String body) {
-        super(message);
+        super(message + ": " + body);
         this.status = status;
         this.body = body;
     }

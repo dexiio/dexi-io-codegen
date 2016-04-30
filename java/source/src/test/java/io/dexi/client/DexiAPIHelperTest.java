@@ -147,7 +147,7 @@ public class DexiAPIHelperTest {
         } catch (DexiAPIException e) {
             assertEquals(testResponseBody, e.getBody());
             assertEquals(500, e.getStatus());
-            assertEquals("NOT GOOD", e.getMessage());
+            assertEquals("NOT GOOD: RESPONSE", e.getMessage());
         }
     }
 
