@@ -1,7 +1,6 @@
 package io.dexi.client.controllers;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import io.dexi.client.controllers.*;
 import static junit.framework.Assert.*;
 
 public class DexiControllerTest {
-    private ExecutionsController controller;
     protected Dexi dexi;
 
     @Before
@@ -25,6 +23,22 @@ public class DexiControllerTest {
     }
 
     protected <T> T getTestValue(String controller, String method, String parameter, Class<T> testValueType) {
+        if (testValueType == String.class) {
+            return (T) "someString";
+        }
+
+        if (testValueType == UUID.class) {
+            return (T) UUID.randomUUID();
+        }
+
+        if (testValueType == Integer.class) {
+            return (T) new Integer(123);
+        }
+
+        if (testValueType == Long.class) {
+            return (T) new Long(123L);
+        }
+
         try {
             return testValueType.newInstance();
         } catch (Exception e) {
@@ -33,7 +47,7 @@ public class DexiControllerTest {
     }
 
     protected void assertTestResult(String controller, String method, Object result) {
-
+        assertNotNull(result);
     }
 
 }

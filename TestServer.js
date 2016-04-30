@@ -1,11 +1,14 @@
 var _ = require('lodash');
 var express = require('express');
 var Q = require('q');
+var bodyParser = require('body-parser')
 
 function TestServer(swagger, port) {
     this.app = express();
     this.swagger = swagger;
     this.port = port;
+
+    this.app.use(bodyParser.raw());
 
     this._parseSwaggerDefinition();
 }
@@ -59,7 +62,8 @@ TestServer.prototype._sendResponse = function(responseDef, response) {
 
     if (responseDef.type === 'string' &&
         responseDef.format === 'byte') {
-        response.status(200).header('Content-Type: text/plain').send('RESPONSE');
+        response.setHeader('Content-Type', 'text/plain');
+        response.status(200).send('RESPONSE');
         return;
     }
 
@@ -79,7 +83,7 @@ TestServer.prototype._verifyRequest = function(def, request) {
             var value;
             switch(parameter.in) {
                 case 'body':
-                    value = this._verifyRefSchema(request.body, parameter);
+                    value = request.body;
                     break;
                 case 'query':
                     value = request.query[parameter.name];

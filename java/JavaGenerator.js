@@ -16,7 +16,7 @@ function JavaGenerator() {
     this.TYPE_BOOL = 'Boolean';
     this.TYPE_INT = 'Integer';
     this.TYPE_LONG = 'Long';
-    this.TYPE_BINARY = 'byte[]';
+
     this.TYPE_MAP = 'Map<String,Object>';
 }
 

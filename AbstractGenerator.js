@@ -52,7 +52,7 @@ function AbstractGenerator(definition, destDir) {
     this.TYPE_BOOL = 'Boolean';
     this.TYPE_INT = 'Integer';
     this.TYPE_LONG = 'Long';
-    this.TYPE_BINARY = 'byte[]';
+    this.TYPE_BINARY = 'DexiBinaryResponse';
     this.TYPE_MAP = 'Map<String,Object>';
 
     this.models = [];
