@@ -22,7 +22,7 @@ public class DexiAPIHelper {
 
     private final String accessToken;
 
-    private Client client;
+    private final Client client;
 
     public DexiAPIHelper(Dexi dexi, String accountId, String accessToken) {
         this.dexi = dexi;
@@ -32,6 +32,13 @@ public class DexiAPIHelper {
         ClientConfig clientConfig = new DefaultClientConfig();
         client = Client.create(clientConfig);
         client.setConnectTimeout(dexi.getRequestTimeout() * 1000);
+    }
+
+    protected DexiAPIHelper(Dexi dexi, Client client, String accountId, String accessToken) {
+        this.dexi = dexi;
+        this.accountId = accountId;
+        this.accessToken = accessToken;
+        this.client = client;
     }
 
     private ClientResponse sendGet(String url, Map<String, String> requestHeaders) throws DexiAPIException {
@@ -57,11 +64,11 @@ public class DexiAPIHelper {
     private WebResource.Builder getWebResource(String url, Map<String, String> requestHeaders) {
         WebResource webResource = client.resource(this.dexi.getEndpoint() + "/" + url);
         WebResource.Builder builder = webResource
+                .type("application/json")
                 .header("X-DexiIO-Account", accountId)
                 .header("X-DexiIO-Access", accessToken)
                 .header("User-Agent", this.dexi.getUserAgent())
-                .accept("application/json")
-                .type("application/json");
+                .accept("application/json");
 
 
         if (requestHeaders != null) {
@@ -93,7 +100,7 @@ public class DexiAPIHelper {
                 throw new DexiAPIException("Invalid HTTP method: " + httpMethod);
         }
 
-        if (response.getStatus() < 200 || response.getStatus() > 206) {
+        if (response.getStatus() < 200 || response.getStatus() > 399) {
             throw new DexiAPIException(response.getStatusInfo().getReasonPhrase(), response.getStatus(),
                     response.getEntity(String.class));
         }

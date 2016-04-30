@@ -19,8 +19,9 @@ public class DexiControllerTest {
     protected Dexi dexi;
 
     @Before
-    public void setUp() throws Exception {
+    public void setupDexi() throws Exception {
         dexi = new Dexi("testAccountId", "testApiKey");
+        dexi.setEndpoint("http://localhost:32432");
     }
 
     protected <T> T getTestValue(String controller, String method, String parameter, Class<T> testValueType) {
