@@ -1,8 +1,9 @@
 var log = require('./logger');
 var _ = require('lodash');
 var fileUtil = require('./FileUtil');
-var execSync = require('child_process').execSync;
+var exec = require('child_process').exec;
 var handlebars = require('handlebars');
+var Q = require('q');
 
 handlebars.registerHelper('equal', function (lvalue, rvalue, options) {
     if (arguments.length < 3)
@@ -150,7 +151,7 @@ AbstractGenerator.prototype.parseModelReference = function(definition) {
     } else if (definition.type === 'string') {
         model.className = this.TYPE_STRING;
     } else if (definition.type === 'integer') {
-        model.className = this.TYPE_INT;
+        model.className = definition.format === 'int64' ? this.TYPE_LONG : this.TYPE_INT;
     } else if (definition.type === 'boolean') {
         model.className = this.TYPE_BOOL;
     } else if (definition.type === 'array' && definition.items) {
@@ -388,7 +389,22 @@ AbstractGenerator.prototype.generate = function () {
 AbstractGenerator.prototype.test = function () {
     log.debug('Testing generated code for', this.name);
 
-    execSync("sh " + this.destDir + "/test.sh", {stdio: [0, 1, 2]});
+    return Q.Promise(function(resolve, reject) {
+        var child = exec("sh " + this.destDir + "/test.sh", {stdio: [0, 1, 2]});
+
+        child.on('exit', function(code) {
+            if (code === 0) {
+                resolve();
+                return;
+            }
+
+            reject(new Error('Child process failed with code: ' + code));
+        });
+
+        child.stderr.pipe(process.stderr);
+        child.stdout.pipe(process.stdout);
+
+    }.bind(this));
 };
 
 

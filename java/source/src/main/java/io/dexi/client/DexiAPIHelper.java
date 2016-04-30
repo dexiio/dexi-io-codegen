@@ -62,7 +62,7 @@ public class DexiAPIHelper {
     }
 
     private WebResource.Builder getWebResource(String url, Map<String, String> requestHeaders) {
-        WebResource webResource = client.resource(this.dexi.getEndpoint() + "/" + url);
+        WebResource webResource = client.resource(this.dexi.getEndpoint() + url);
         WebResource.Builder builder = webResource
                 .type("application/json")
                 .header("X-DexiIO-Account", accountId)

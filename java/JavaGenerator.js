@@ -9,7 +9,15 @@ function JavaGenerator() {
 	this.name = 'JavaGenerator';
     this.sourceDir = __dirname + '/source';
     this.templatesDir = this.sourceDir + '/templates';
-    this.sources = ['src','pom.xml'];
+    this.sources = ['src','pom.xml', 'test.sh'];
+
+    this.TYPE_UUID = 'UUID';
+    this.TYPE_STRING = 'String';
+    this.TYPE_BOOL = 'Boolean';
+    this.TYPE_INT = 'Integer';
+    this.TYPE_LONG = 'Long';
+    this.TYPE_BINARY = 'byte[]';
+    this.TYPE_MAP = 'Map<String,Object>';
 }
 
 util.inherits(JavaGenerator, AbstractGenerator);

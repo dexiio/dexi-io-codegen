@@ -2,6 +2,7 @@ package io.dexi.client.models;
 
 import java.util.*;
 import io.dexi.client.controllers.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * {{model.description}}
@@ -15,6 +16,7 @@ public class {{model.className}} extends BaseModel {
      * {{{this.description}}}
      **/
     {{/if}}
+    @JsonProperty("{{this.paramName}}")
     private {{{this.className}}} {{this.fieldName}};
     {{#unless @last}}
 
