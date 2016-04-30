@@ -1,14 +1,14 @@
 var _ = require('lodash');
 var express = require('express');
 var Q = require('q');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 function TestServer(swagger, port) {
     this.app = express();
     this.swagger = swagger;
     this.port = port;
 
-    this.app.use(bodyParser.raw());
+    this.app.use(bodyParser.json());
 
     this._parseSwaggerDefinition();
 }
